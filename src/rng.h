@@ -7,24 +7,30 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+//#pragma once
+#ifndef RNG_H_
+#define RNG_H_
 
 /* Rmath */
 #ifdef R_PACKAGE
-extern "C" { 
-#include <R.h> 
+extern "C" {
+#include <R.h>
 }
-extern "C" { namespace rmath {
+extern "C" {
+  namespace rmath {
 #include <Rmath.h>
-}}
+  }
+}
 # ifdef beta
 #  undef beta
 # endif
 #else
 # define MATHLIB_STANDALONE
-extern "C" { namespace rmath {  
+extern "C" {
+  namespace rmath {
 # include <Rmath.h>
-}}
+  }
+}
 #endif
 
 /* ARMS */
@@ -40,3 +46,4 @@ extern "C" {
 }
 #endif
 
+#endif // RNG_H_

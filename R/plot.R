@@ -25,16 +25,16 @@
 ##############################################################################
 plotCoef <- function(object, smooth=FALSE, ...) {
 
-    p <- ggplot(data=object, aes(x=Time))
+    p <- ggplot(data=object, aes_string(x="Time"))
 
     if (!smooth)
-        p <- p + geom_step(aes(y=Mid), direction="vh") +
-            geom_step(aes(y=High), direction="vh", linetype=2) +
-            geom_step(aes(y=Low), direction="vh", linetype=2)
+        p <- p + geom_step(aes_string(y="Mid"), direction="vh") +
+            geom_step(aes_string(y="High"), direction="vh", linetype=2) +
+            geom_step(aes_string(y="Low"), direction="vh", linetype=2)
     else
-       p <- p + geom_line(aes(y=Mid)) +
-           geom_line(aes(y=High), linetype=2) +
-           geom_line(aes(y=Low), linetype=2)
+       p <- p + geom_line(aes_string(y="Mid")) +
+           geom_line(aes_string(y="High"), linetype=2) +
+           geom_line(aes_string(y="Low"), linetype=2)
 
     if (length(levels(factor(object$Model))) == 1)
         p <- p + facet_wrap(~ Cov, scales="free_y")
@@ -52,7 +52,7 @@ plotCoef <- function(object, smooth=FALSE, ...) {
 # Plot iteration jump data frame returned by jump.bayesCox
 ##############################################################################
 plotJumpTrace <- function(object, ...) {
-    p <- ggplot(data=object, aes(x=Iter, y=Count)) +
+    p <- ggplot(data=object, aes_string(x="Iter", y="Count")) +
         geom_line(size=0.1, alpha=0.6) +
         facet_wrap(~ Cov) +
         xlab("Iteration") + ylab("Pieces of Coefficient") +
@@ -75,7 +75,7 @@ plotJumpHist <- function(object, ...) {
 # Plot the latent variance nu from the bayesCox model
 ##############################################################################
 plotNu <- function(object, ...) {
-    p <- ggplot(data=object, aes(x=Value)) +
+    p <- ggplot(data=object, aes_string(x="Value")) +
         stat_bin(aes(y =..count../sum(..count..))) +
         xlab("Nu") + ylab("Relative Frequency") +
         opts(plot.margin=unit(rep(0, 4), "lines"))

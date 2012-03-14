@@ -7,7 +7,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#pragma once
+//#pragma once
+
+#ifndef INTREG_PAR_H_
+#define INTREG_PAR_H_
 
 #include "ublas.h"
 
@@ -19,243 +22,244 @@
 /* Definition of model parameter struct                              */
 /*------------------------------------------------------------------*/
 namespace ir {
-	/* Baseline hazard */
-	struct BaseHazPar
-	{
-		BaseHazPar(ublas::vector<double> l)
-			: lambda(l) {}
+/* Baseline hazard */
+struct BaseHazPar
+{
+  BaseHazPar(ublas::vector<double> l)
+    : lambda(l) {}
 
-		ublas::vector<double> lambda;
-		
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  ublas::vector<double> lambda;
 
-	/* Time Indep Cox coef */
-	struct TimeIndepCoxPar: public BaseHazPar 
-	{
-		TimeIndepCoxPar(ublas::vector<double> l,
-						ublas::vector<double> b)
-			: BaseHazPar(l),
-			beta(b) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		ublas::vector<double> beta;
+/* Time Indep Cox coef */
+struct TimeIndepCoxPar: public BaseHazPar
+{
+  TimeIndepCoxPar(ublas::vector<double> l,
+                  ublas::vector<double> b)
+    : BaseHazPar(l),
+      beta(b) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  ublas::vector<double> beta;
 
-    /* Time Indep CORH coef */
-	struct TimeIndepGORHPar: public TimeIndepCoxPar 
-	{
-		TimeIndepGORHPar(ublas::vector<double> l,
-						 ublas::vector<double> b,
-						 double t)
-			: TimeIndepCoxPar(l, b),
-			theta(t) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		double theta;
+/* Time Indep CORH coef */
+struct TimeIndepGORHPar: public TimeIndepCoxPar
+{
+  TimeIndepGORHPar(ublas::vector<double> l,
+                   ublas::vector<double> b,
+                   double t)
+    : TimeIndepCoxPar(l, b),
+      theta(t) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  double theta;
 
-	/* Time varying Cox coef */
-	struct TimeVaryingCoxPar: public BaseHazPar 
-	{
-		TimeVaryingCoxPar(ublas::vector<double> l,
-						  ublas::matrix<double> b,
-						  ublas::vector<double> n)
-			: BaseHazPar(l),
-			beta(b),
-			nu(n) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		ublas::matrix<double> beta;
-		ublas::vector<double> nu;
+/* Time varying Cox coef */
+struct TimeVaryingCoxPar: public BaseHazPar
+{
+  TimeVaryingCoxPar(ublas::vector<double> l,
+                    ublas::matrix<double> b,
+                    ublas::vector<double> n)
+    : BaseHazPar(l),
+      beta(b),
+      nu(n) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  ublas::matrix<double> beta;
+  ublas::vector<double> nu;
 
-	/* Time varying CORH coef */
-	struct TimeVaryingGORHPar: public TimeVaryingCoxPar 
-	{
-		TimeVaryingGORHPar(ublas::vector<double> l,
-				   		   ublas::matrix<double> b,
-						   ublas::vector<double> n,
-						   double t)
-			: TimeVaryingCoxPar(l, b, n),
-			theta(t) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		double theta;
+/* Time varying CORH coef */
+struct TimeVaryingGORHPar: public TimeVaryingCoxPar
+{
+  TimeVaryingGORHPar(ublas::vector<double> l,
+                     ublas::matrix<double> b,
+                     ublas::vector<double> n,
+                     double t)
+    : TimeVaryingCoxPar(l, b, n),
+      theta(t) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  double theta;
 
-	/* Time varying Cox coef with jumps */
-	struct DynamicCoxPar: public TimeVaryingCoxPar 
-	{
-		DynamicCoxPar(ublas::vector<double> l,
-					  ublas::matrix<double> b,
-					  ublas::vector<double> n,
-					  ublas::matrix<int> jp)
-			: TimeVaryingCoxPar(l, b, n),
-			jump(jp) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		ublas::matrix<int> jump;
+/* Time varying Cox coef with jumps */
+struct DynamicCoxPar: public TimeVaryingCoxPar
+{
+  DynamicCoxPar(ublas::vector<double> l,
+                ublas::matrix<double> b,
+                ublas::vector<double> n,
+                ublas::matrix<int> jp)
+    : TimeVaryingCoxPar(l, b, n),
+      jump(jp) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  ublas::matrix<int> jump;
 
-	/* Time varying CORH coef with jumps*/
-	struct DynamicGORHPar: public DynamicCoxPar 
-	{
-		DynamicGORHPar(ublas::vector<double> l,
-					   ublas::matrix<double> b,
-					   ublas::vector<double> n,
-					   ublas::matrix<int> jp,
-					   double t)
-			: DynamicCoxPar(l, b, n, jp),
-			theta(t) {}
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 
-		double theta;
+/* Time varying CORH coef with jumps*/
+struct DynamicGORHPar: public DynamicCoxPar
+{
+  DynamicGORHPar(ublas::vector<double> l,
+                 ublas::matrix<double> b,
+                 ublas::vector<double> n,
+                 ublas::matrix<int> jp,
+                 double t)
+    : DynamicCoxPar(l, b, n, jp),
+      theta(t) {}
 
-		virtual std::ostream& print(std::ostream& out) const;
-		virtual std::ofstream& output(std::ofstream& out) const;
-	};
+  double theta;
+
+  virtual std::ostream& print(std::ostream& out) const;
+  virtual std::ofstream& output(std::ofstream& out) const;
+};
 }
 
 /*------------------------------------------------------------------*/
 /* Template function, mean of vector of model parameters            */
 /*------------------------------------------------------------------*/
 namespace ir {
-	template <typename P>
-	inline P mean(const std::vector<P>& vp);
-	
-	/* P = BaseHazPar */
-	template <>
-	inline BaseHazPar mean(const std::vector<BaseHazPar>& vp) 
-	{
-		Size n = vp.size();
-		BaseHazPar par(vp[0]);
-		for (Size i = 1; i < n; ++i)
-			par.lambda += vp[i].lambda;
+template <typename P>
+inline P mean(const std::vector<P>& vp);
 
-		par.lambda /= n;
-		return par;
-	}
+/* P = BaseHazPar */
+template <>
+inline BaseHazPar mean(const std::vector<BaseHazPar>& vp)
+{
+  Size n = vp.size();
+  BaseHazPar par(vp[0]);
+  for (Size i = 1; i < n; ++i)
+    par.lambda += vp[i].lambda;
 
-	/* P = TimeIndepCoxPar */
-	template <>
-	inline TimeIndepCoxPar mean(const std::vector<TimeIndepCoxPar>& vp) 
-	{
-		Size n = vp.size();
-		TimeIndepCoxPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		return par;
-	}
-	
-	/* P = TimeIndepGORHPar */
-	template <>
-	inline TimeIndepGORHPar mean(const std::vector<TimeIndepGORHPar>& vp) 
-	{
-		Size n = vp.size();
-		TimeIndepGORHPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-			par.theta += vp[i].theta;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		par.theta /= n;
-		return par;
-	}
-
-	/* P = TimeVaryingCoxPar */
-	template <>
-	inline TimeVaryingCoxPar mean(const std::vector<TimeVaryingCoxPar>& vp) 
-	{
-		Size n = vp.size();
-		TimeVaryingCoxPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-			par.nu += vp[i].nu;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		par.nu /= n;
-		return par;
-	}
-
-	/* P = TimeVaryingGORHPar */
-	template <>
-	inline TimeVaryingGORHPar mean(const std::vector<TimeVaryingGORHPar>& vp) 
-	{
-		Size n = vp.size();
-		TimeVaryingGORHPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-			par.nu += vp[i].nu;
-			par.theta += vp[i].theta;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		par.nu /= n;
-		par.theta /= n;
-		return par;
-	}
-
-	/* P = DynamicCoxPar */
-	template <>
-	inline DynamicCoxPar mean(const std::vector<DynamicCoxPar>& vp) 
-	{
-		Size n = vp.size();
-		DynamicCoxPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-			par.nu += vp[i].nu;
-			par.jump += vp[i].jump;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		par.nu /= n;
-		return par;
-	}
-
-	/* P = DynamicGORHPar */
-	template <>
-	inline DynamicGORHPar mean(const std::vector<DynamicGORHPar>& vp) 
-	{
-		Size n = vp.size();
-		DynamicGORHPar par(vp[0]);
-		for (Size i = 1; i < n; ++i) {
-			par.lambda += vp[i].lambda;
-			par.beta += vp[i].beta;
-			par.nu += vp[i].nu;
-			par.jump += vp[i].jump;
-			par.theta += vp[i].theta;
-		}
-
-		par.lambda /= n;
-		par.beta /= n;
-		par.nu /= n;
-		par.theta /= n;
-		return par;
-	}
+  par.lambda /= n;
+  return par;
 }
+
+/* P = TimeIndepCoxPar */
+template <>
+inline TimeIndepCoxPar mean(const std::vector<TimeIndepCoxPar>& vp)
+{
+  Size n = vp.size();
+  TimeIndepCoxPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  return par;
+}
+
+/* P = TimeIndepGORHPar */
+template <>
+inline TimeIndepGORHPar mean(const std::vector<TimeIndepGORHPar>& vp)
+{
+  Size n = vp.size();
+  TimeIndepGORHPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+    par.theta += vp[i].theta;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  par.theta /= n;
+  return par;
+}
+
+/* P = TimeVaryingCoxPar */
+template <>
+inline TimeVaryingCoxPar mean(const std::vector<TimeVaryingCoxPar>& vp)
+{
+  Size n = vp.size();
+  TimeVaryingCoxPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+    par.nu += vp[i].nu;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  par.nu /= n;
+  return par;
+}
+
+/* P = TimeVaryingGORHPar */
+template <>
+inline TimeVaryingGORHPar mean(const std::vector<TimeVaryingGORHPar>& vp)
+{
+  Size n = vp.size();
+  TimeVaryingGORHPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+    par.nu += vp[i].nu;
+    par.theta += vp[i].theta;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  par.nu /= n;
+  par.theta /= n;
+  return par;
+}
+
+/* P = DynamicCoxPar */
+template <>
+inline DynamicCoxPar mean(const std::vector<DynamicCoxPar>& vp)
+{
+  Size n = vp.size();
+  DynamicCoxPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+    par.nu += vp[i].nu;
+    par.jump += vp[i].jump;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  par.nu /= n;
+  return par;
+}
+
+/* P = DynamicGORHPar */
+template <>
+inline DynamicGORHPar mean(const std::vector<DynamicGORHPar>& vp)
+{
+  Size n = vp.size();
+  DynamicGORHPar par(vp[0]);
+  for (Size i = 1; i < n; ++i) {
+    par.lambda += vp[i].lambda;
+    par.beta += vp[i].beta;
+    par.nu += vp[i].nu;
+    par.jump += vp[i].jump;
+    par.theta += vp[i].theta;
+  }
+
+  par.lambda /= n;
+  par.beta /= n;
+  par.nu /= n;
+  par.theta /= n;
+  return par;
+}
+}
+#endif // INTREG_PAR_H_
