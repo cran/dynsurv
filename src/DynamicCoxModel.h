@@ -82,7 +82,7 @@ gibbsKernel(const Prior& prior,
   this->sampleMat(par.lambda, expXb, dNMat, YMat);
 
   /* Sample lambda */
-  sampleLambda(expXb, dNMat, YMat, prior.base_prior, par.lambda);
+  this->sampleLambda(expXb, dNMat, YMat, prior.base_prior, par.lambda);
 
   /* Reversible jump MCMC for beta */
   ublas::vector<double> omega(this->N_, 1.0);
@@ -114,9 +114,9 @@ gibbsKernel(const Prior& prior,
 
     /* Decide whether to accept */
     if (prop_flag == true) {
-      double prior_ratio = exp(logCoefPrior(ublas::column(prop_par.jump, j),
+      double prior_ratio = exp(this->logCoefPrior(ublas::column(prop_par.jump, j),
                                             ublas::column(prop_par.beta, j), prior.coef_prior) -
-                               logCoefPrior(ublas::column(par.jump, j), ublas::column(par.beta, j),
+                               this->logCoefPrior(ublas::column(par.jump, j), ublas::column(par.beta, j),
                                             prior.coef_prior));
 
       double like_ratio = exp(ublas::sum(ublas::log(this->coxLikeVec(prop_par.lambda,
@@ -130,7 +130,7 @@ gibbsKernel(const Prior& prior,
     }
 
     if (prop_flag == false)
-      sampleBeta(j, dNMat, YMat, par.lambda, par.jump, omega,
+      this->sampleBeta(j, dNMat, YMat, par.lambda, par.jump, omega,
                  prior.coef_prior, par.beta, par.nu);
   }
 }

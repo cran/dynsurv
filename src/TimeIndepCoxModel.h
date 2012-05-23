@@ -71,11 +71,11 @@ gibbsKernel(const Prior& prior,
   this->sampleMat(par.lambda, expXb, dNMat, YMat);
 
   /* Sample lambda */
-  sampleLambda(expXb, dNMat, YMat, prior.base_prior, par.lambda);
+  this->sampleLambda(expXb, dNMat, YMat, prior.base_prior, par.lambda);
 
   /* Sample beta */
   ublas::vector<double> omega(this->N_, 1.0);
-  sampleBeta(par.lambda, dNMat, YMat, omega, prior.coef_prior, par.beta);
+  this->sampleBeta(par.lambda, dNMat, YMat, omega, prior.coef_prior, par.beta);
 }
 
 /* Likelihood function */

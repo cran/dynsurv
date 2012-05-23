@@ -1,6 +1,6 @@
 Package: dynsurv
-Version: 0.1-7
-Date: 2012-03-14
+Version: 0.1-8
+Date: 2012-05-23
 Title: Dynamic models for survival data
 Author: Xiaojing Wang <wangxj03@gmail.com>, Jun Yan
         <jun.yan@uconn.edu>, and Ming-Hui Chen
@@ -19,6 +19,7 @@ SystemRequirements: Boost library from http://www.boost.org
 License: GPL (>= 3)
 LazyLoad: Yes
 LazyData: Yes
-Packaged: 2012-03-15 00:09:15 UTC; jyan
+Packaged: 2013-12-03 09:13:30 UTC; ripley
 Repository: CRAN
-Date/Publication: 2012-03-15 05:22:11
+Date/Publication: 2013-12-03 11:23:08
+NeedsCompilation: yes

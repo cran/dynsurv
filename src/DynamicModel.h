@@ -385,7 +385,7 @@ sampleBeta(const Size j,
                                next_b / next_sg2);
 
     /* Construct object of LogDenPar_type */
-    struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, this->N_,
+    struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, (int)this->N_,
              ldp_X, ldp_dleY
     };
     double xsamp = 0.0;
@@ -491,7 +491,7 @@ sampleBeta(const Size j,
                                next_b / next_sg2);
 
     /* Construct object of LogDenPar_type */
-    struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, this->N_,
+    struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, (int)this->N_,
              ldp_X, ldp_dleY
     };
     double xsamp = 0.0;
