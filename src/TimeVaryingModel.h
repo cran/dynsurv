@@ -87,7 +87,7 @@ sampleBeta(const ublas::vector<double>& tLambda,
   const double INF = std::numeric_limits<double>::max();
 
   nu = ublas::vector<double>(this->nBeta_, coef_prior.sd * coef_prior.sd);
-  ublas::matrix<double> sg2Mat(this->K_, (int)this->nBeta_, coef_prior.sd * coef_prior.sd);
+  ublas::matrix<double> sg2Mat(this->K_, this->nBeta_, coef_prior.sd * coef_prior.sd);
   ublas::row(sg2Mat, 0) *= a0_;
 
   /* Loop through time and covariate */
@@ -119,8 +119,10 @@ sampleBeta(const ublas::vector<double>& tLambda,
                                  next_b / next_sg2);
 
       /* Construct object of LogDenPar_type */
-      struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, (int)this->N_,
-               ldp_X, ldp_dleY
+      struct IntRegModel<Prior, Par>::LogDenPar data = {
+	  ldp_mu, ldp_sg2, 
+	  static_cast<int> (this->N_),
+	  ldp_X, ldp_dleY
       };
       double xsamp = 0.0;
 
@@ -210,8 +212,10 @@ sampleBeta(const ublas::vector<double>& tLambda,
                                  next_b / next_sg2);
 
       /* Construct object of LogDenPar_type */
-      struct IntRegModel<Prior, Par>::LogDenPar data = {ldp_mu, ldp_sg2, (int)this->N_,
-               ldp_X, ldp_dleY
+      struct IntRegModel<Prior, Par>::LogDenPar data = {
+	  ldp_mu, ldp_sg2, 
+	  static_cast<int> (this->N_),
+	  ldp_X, ldp_dleY
       };
       double xsamp = 0.0;
 
