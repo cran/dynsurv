@@ -1,10 +1,10 @@
 Package: dynsurv
 Title: Dynamic Models for Survival Data
-Version: 0.3-0
-Date: 2016-07-13
+Version: 0.3-2
+Date: 2016-08-30
 Authors@R: c(
     person(given = "Wenjie", family = "Wang",
-           email = "wenjie.2.wang@uconn.edu", role = c("cre", "ctb")),
+           email = "wenjie.2.wang@uconn.edu", role = c("cre", "aut")),
     person(given = "Ming-Hui", family = "Chen",
            email = "ming-hui.chen@uconn.edu", role = "aut"),
     person(given = "Xiaojing", family = "Wang",
@@ -30,11 +30,11 @@ NeedsCompilation: yes
 URL: https://github.com/wenjie2wang/dynsurv
 BugReports: https://github.com/wenjie2wang/dynsurv/issues
 RoxygenNote: 5.0.1
-Packaged: 2016-07-13 15:22:15 UTC; wenjie
-Author: Wenjie Wang [cre, ctb],
+Packaged: 2016-08-30 18:13:52 UTC; wenjie
+Author: Wenjie Wang [cre, aut],
   Ming-Hui Chen [aut],
   Xiaojing Wang [aut],
   Jun Yan [aut]
 Maintainer: Wenjie Wang <wenjie.2.wang@uconn.edu>
 Repository: CRAN
-Date/Publication: 2016-07-14 07:18:55
+Date/Publication: 2016-08-31 01:18:32

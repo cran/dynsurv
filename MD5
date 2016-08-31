@@ -1,9 +1,9 @@
-599f742a907d261b8f129ce60eefcf27 *ChangeLog
-1466ffa36fdad24dea303fcecefa9136 *DESCRIPTION
+37a9c2c17a2a83dd3a5494dc02e32d1b *ChangeLog
+e73a8b9ecf3a7f161b9ac7c39022525b *DESCRIPTION
 f680d9b9b822aa01c78623071ac856a4 *NAMESPACE
 01e217301760d3507109da7a4e2ce9bf *R/bayesCox.R
 cb251039df76bb6213e0e342c183da16 *R/coef.R
-a7cd8bb5f4457bb5153fdae7d6edfe6d *R/data.R
+d97fb063b6d96dd2e5e0e79b561461d0 *R/data.R
 2e74ead465fd12378c4cd6a9e74289d3 *R/dynsurv-package.R
 cc9613caad21805db39fe81b3d6a7908 *R/jump.R
 adc06f01e737dbaeed73f32c788e182f *R/plot.R
@@ -29,7 +29,7 @@ c56fa966034a6c80c4200dc96c8c6826 *man/plotCoef.Rd
 92d3d042b50c94c648993745f1a2b26b *man/splineCox.Rd
 c6419de0e4e6c3491c00a5b41c3748ca *man/survCurve.Rd
 21af5e02dcb60d43dbb85ac92ad86da4 *man/survDiff.Rd
-7c9857ce9f28df230e505dd591193d04 *man/tooth.Rd
+08088231fa3aa12adda72daf27a0b553 *man/tooth.Rd
 3ff70fe691b7fab8922dbd198b3b6ffd *man/tvTran.Rd
 adace84d992dc754f1cecba279b08dfe *src/CoxModel.h
 509c7d80d27562a2fcf5a329624b3820 *src/DynamicCoxModel.h
@@ -43,7 +43,7 @@ dd4fcafd81083973c5d75dc7df8354d3 *src/DynamicGORHModel.h
 3f45183e92ae7e4fdbd0516398aa1c8f *src/IntRegPar.cpp
 5e6d3a37d5b48ea463d0ee9859313d36 *src/IntRegPar.h
 98597848e8978eb7bc64765d4963d229 *src/IntRegPrior.h
-fd2006a1518b24eb88b447a94cb5bb88 *src/Makevars
+3dcba34de816804b4c21a30de9dd7045 *src/Makevars
 3c43c1d75af0fa26c14a8ddcba72425b *src/TimeIndepCoxModel.h
 180794ed91db7b270b05eba43f33a503 *src/TimeIndepGORHModel.h
 87a1767407aa41c78ad74d4ffb42499e *src/TimeIndepModel.h
