@@ -1,7 +1,7 @@
 ################################################################################
 ##
 ##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2016
+##   Copyright (C) 2011-2017
 ##
 ##   This file is part of the R package dynsurv.
 ##
@@ -19,7 +19,7 @@
 
 
 ### Bayesian Cox model
-## grid: must be sorted with last number be finite
+## grid: must be sorted with last number being finite
 ## base.prior:
 ##   list(type = "Gamma", shape = 0.1, rate = 0.1)
 ## coef.prior:
@@ -35,63 +35,99 @@
 ##' model. The baseline hazards are allowed to be either time-varying or
 ##' dynamic.
 ##'
-##' For application, it is recommended that users preprocess the data by
-##' rounding down (up) the left (right) endpoints of the censoring intervals
-##' to at most three significant digits and leave the \code{grid} unspecified
-##' in the function call to reduce probably unnecessary computational burden.
-##' It also helps avoid possible errors caused by mispecifed \code{grid}. For
-##' example, the left endpoints can be rounded down in the nearest 0.1 unit
-##' of time by \code{left <- floor(left * 10) / 10} and the right endpoints
-##' can similarly be rounded up by \code{right <- ceiling(right * 10) / 10}.
-##'
 ##' To use default hyper parameters in the specification of either
 ##' \code{base.prior} or \code{coef.prior}, one only has to supply the name of
 ##' the prior, e.g., \code{list(type = "Gamma")}, \code{list(type = "HAR1")}.
 ##'
 ##' The \code{gibbs} argument is a list of components:
 ##' \describe{
-##'     \item{iter:}{number of iterations, default 3000;}
-##'     \item{burn:}{number of burning, default 500;}
-##'     \item{thin:}{number of thinning, default 1;}
-##'     \item{verbose:}{a logical value, default \code{TRUE}. If
+##'     \item{iter:}{Number of iterations, default 3000;}
+##'     \item{burn:}{Number of burning, default 500;}
+##'     \item{thin:}{Number of thinning, default 1;}
+##'     \item{verbose:}{A logical value, default \code{TRUE}. If
 ##'         \code{TRUE}, print the iteration;}
-##'     \item{nReport:}{print frequency, default 100.}
+##'     \item{nReport:}{Print frequency, default 100.}
 ##' }
 ##'
 ##' The \code{control} argument is a list of components:
 ##' \describe{
-##'     \item{intercept:}{a logical value, default \code{FALSE}. If
+##'     \item{intercept:}{A logical value, default \code{FALSE}. If
 ##'         \code{TRUE}, the model will estimate the intercept, which is the
 ##'         log of baseline hazards. If \code{TRUE}, please remember to turn
 ##'         off the direct estimation of baseline hazards, i.e.,
 ##'         \code{base.prior = list(type = "Const")}}
-##'     \item{a0:}{multiplier for initial variance in time-varying or dynamic
+##'     \item{a0:}{Multiplier for initial variance in time-varying or dynamic
 ##'         models, default 100;}
-##'     \item{eps0:}{size of auxiliary uniform latent variable in dynamic model,
+##'     \item{eps0:}{Size of auxiliary uniform latent variable in dynamic model,
 ##'         default 1.}
 ##' }
 ##'
+##' For users interested in extracting MCMC sampling information from the
+##' output files, the detail of the output files is presented as follows: Let
+##' \eqn{k} denote the number of time points (excluding time zero) specified
+##' in grid, \eqn{ck} equal \eqn{1} for model with time-invariant coefficients;
+##' \eqn{ck} equal \eqn{k} otherwise, and \eqn{p} denote the number of
+##' covariates.  Then the each sample saved in each row consists of the
+##' following possible parts.
+##' \describe{
+##'     \item{Part 1:}{The first \eqn{k} numbers represent the jump size of
+##' baseline hazard function at each time grid.  If we take the column mean
+##' of the first \eqn{k} columns of the output file, we will get the same
+##' numbers with \code{obj$est$lambda}, where \code{obj} is the \code{bayesCox}
+##' object returned by the function.}
+##'     \item{Part 2:}{The sequence from \eqn{(k + 1) to (k + ck * p)}
+##' represent the coefficients of covariates at the time grid.  The first
+##' \eqn{k} numbers in the sequence are the coefficients for the first covariate
+##' at the time grid; The second \eqn{k} numbers' sub-sequence are the
+##' coefficients for the second covariate and so on.}
+##'     \item{Part 3:}{The sequence from \eqn{(k + ck * p + 1)} to
+##' \eqn{(k + ck * p + p)} represents the sampled latent variance of
+##' coefficients.}
+##'     \item{Part 4:}{The sequence from \eqn{(k + ck * p + p + 1)} to
+##' \eqn{(k + 2 * ck * p + p)} represents the indicator of whether there is
+##' a jump of the covariate coefficients at the time grid.  Similar with Part 2,
+##' the first k numbers' sub-sequence is for the first covariate, the second
+##' \eqn{k} numbers' sub-sequence is for the second covariate, and so on.}
+##' }
+##' For the model with time-independent coefficients, the output file only
+##' has Part 1 and Part 2 in each row; For time-varying coefficient model,
+##' the output file has Part 1, 2, and 3; The output file for the dynamic
+##' model has all the four parts.  Note that the dynamic baseline hazard will
+##' be taken as one covariate.  So \eqn{p} needs being replaced with
+##' \eqn{(p + 1)} for model with dynamic baseline hazard rate.
+##' No function in the package actually needs the Part 1 from the output file
+##' now; The Part 2 is used by function \code{coef} and \code{survCurve};
+##' The Part 3 is needed by function \code{nu}; Function \code{jump} extracts
+##' the Part 4.
+##'
 ##' @usage
-##' bayesCox(formula, data, grid = NULL, out = "mcmc.txt", model =
-##'          c("TimeIndep", "TimeVarying", "Dynamic"), base.prior = list(),
-##'          coef.prior = list(), gibbs = list(), control = list())
+##' bayesCox(formula, data, grid = NULL, out = "mcmc.txt",
+##'          model = c("TimeIndep", "TimeVarying", "Dynamic"),
+##'          base.prior = list(), coef.prior = list(),
+##'          gibbs = list(), control = list())
 ##'
 ##' @param formula A formula object, with the response on the left of a '~'
 ##'     operator, and the terms on the right. The response must be a survival
-##'     object as returned by the \code{Surv} function.
+##'     object as returned by the function \code{Surv} with \code{type =
+##'     "interval2"}. \code{help(Surv)} for details.
 ##' @param data A data.frame in which to interpret the variables named in the
 ##'     \code{formula}.
 ##' @param grid Vector of pre-specified time grid points for model fitting.
 ##'     It will be automatically set up from data if it is left unspecified
 ##'     in the function call. By default, it consists of all the unique
-##'     finite endpoints of the censoring intervals after time zero.  The
-##'     \code{grid} specified in the function call must be sorted, and covers
-##'     all the finite non-zero endpoints of the censoring intervals.
+##'     finite endpoints (rounded to two significant numbers) of the
+##'     censoring intervals after time zero.  The \code{grid} specified in
+##'     the function call determines the location of possible jumps. It should
+##'     be sorted increasingly and cover all the finite non-zero endpoints of
+##'     the censoring intervals. Inappropriate \code{grid} specified will be
+##'     taken care by the function internally.
 ##' @param out Name of Markov chain Monte Carlo (MCMC) samples output file.
 ##'     Each row contains one MCMC sample information. The file is needed for
 ##'     those functions further summarizing estimation results in this
-##'     package.
-##' @param model Model type to fit.
+##'     package. See Section Details for details.
+##' @param model Model type to fit. Available options are \code{"TimeIndep"},
+##'     \code{"TimeVarying"}, and \code{"Dynamic"}. Partial matching on the
+##'     name is allowed.
 ##' @param base.prior List of options for prior of baseline lambda. Use
 ##'     \code{list(type = "Gamma", shape = 0.1, rate = 0.1)} for all models;
 ##'     \code{list(type = "Const", value = 1)} for \code{Dynamic} model when
@@ -129,18 +165,21 @@
 ##' @keywords Bayesian Cox dynamic interval censor
 ##' @examples
 ##' \dontrun{
+##' library(dynsurv)
+##' set.seed(1216)
+##'
 ##' ############################################################################
 ##' ### Attach one of the following two data sets
 ##' ############################################################################
 ##'
-##' ## breast cancer data
-##' data(bcos) ## attach bcos and bcos.grid
+##' ### breast cancer data
+##' data(bcos)       # attach bcos and bcos.grid
 ##' mydata <- bcos
-##' ## mygrid <- bcos.grid
+##' mygrid <- bcos.grid
 ##' myformula <- Surv(left, right, type = "interval2") ~ trt
 ##'
-##' ## tooth data
-##' ## data(tooth) ## load tooth and tooth.grid
+##' ### tooth data
+##' ## data(tooth)   # attach tooth and tooth.grid
 ##' ## mydata <- tooth
 ##' ## mygrid <- tooth.grid
 ##' ## myformula <- Surv(left, rightInf, type = "interval2") ~ dmf + sex
@@ -150,61 +189,62 @@
 ##' ############################################################################
 ##'
 ##' ## Fit time-independent coefficient model
-##' fit0 <- bayesCox(myformula, mydata, out = "tiCox.txt",
-##'                  model = "TimeIndep",
+##' fit0 <- bayesCox(myformula, mydata, out = "tiCox.txt", model = "TimeIndep",
 ##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
 ##'                  coef.prior = list(type = "Normal", mean = 0, sd = 1),
 ##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 5))
+##'                               verbose = TRUE, nReport = 20))
 ##' plotCoef(coef(fit0, level = 0.9))
 ##'
+##' ## Plot the estimated survival function for given new data
+##' newDat <- data.frame(trt = c("Rad", "RadChem"))
+##' row.names(newDat) <- unique(newDat$trt)
+##' plotSurv(survCurve(fit0, newDat), conf.int = TRUE)
+##'
 ##' ## Fit time-varying coefficient model
-##' fit1 <- bayesCox(myformula, mydata, out = "tvCox.txt",
-##'                  model = "TimeVarying",
+##' fit1 <- bayesCox(myformula, mydata, out = "tvCox.txt", model = "TimeVary",
 ##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
 ##'                  coef.prior = list(type = "AR1", sd = 1),
 ##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 5))
+##'                               verbose = TRUE, nReport = 20))
 ##' plotCoef(coef(fit1))
+##' plotSurv(survCurve(fit1), conf.int = TRUE)
 ##'
 ##' ## Fit dynamic coefficient model with time-varying baseline hazards
-##' fit2 <- bayesCox(myformula, mydata, out = "dynCox1.txt",
-##'                  model = "Dynamic",
+##' fit2 <- bayesCox(myformula, mydata, out = "dynCox1.txt", model = "Dynamic",
 ##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
 ##'                  coef.prior = list(type = "HAR1", shape = 2, scale = 1),
 ##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 5))
+##'                               verbose = TRUE, nReport = 20))
 ##' plotCoef(coef(fit2))
 ##' plotJumpTrace(jump(fit2))
 ##' plotJumpHist(jump(fit2))
 ##' plotNu(nu(fit2))
+##' plotSurv(survCurve(fit2), conf.int = TRUE)
 ##'
 ##' ## Plot the coefficient estimates from three models together
 ##' plotCoef(rbind(coef(fit0), coef(fit1), coef(fit2)))
 ##'
 ##' ## Fit dynamic coefficient model with dynamic hazards (in log scales)
-##' fit3 <- bayesCox(myformula, mydata, out = "dynCox2.txt",
-##'                  model = "Dynamic",
+##' fit3 <- bayesCox(myformula, mydata, out = "dynCox2.txt", model = "Dynamic",
 ##'                  base.prior = list(type = "Const"),
 ##'                  coef.prior = list(type = "HAR1", shape = 2, scale = 1),
 ##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport=5),
+##'                               verbose = TRUE, nReport = 20),
 ##'                  control = list(intercept = TRUE))
 ##' plotCoef(coef(fit3))
 ##' plotJumpTrace(jump(fit3))
 ##' plotJumpHist(jump(fit3))
 ##' plotNu(nu(fit3))
+##' plotSurv(survCurve(fit3), conf.int = TRUE)
 ##'
-##' ## Plot the estimated survival function and hazard function
-##' newDat <- bcos[c(1L, 47L), ]
-##' row.names(newDat) <- c("Rad", "RadChem")
+##' ## Plot the estimated survival function and the difference
 ##' plotSurv(survCurve(fit3, newdata = newDat, type = "survival"),
 ##'          legendName = "Treatment", conf.int = TRUE)
-##' plotSurv(survDiff(fit3, newdata = newDat, type = "cumhaz"),
+##' plotSurv(survDiff(fit3, newdata = newDat, type = "survival"),
 ##'          legendName = "Treatment", conf.int = TRUE, smooth = TRUE)
 ##' }
-##'
-##' @importFrom stats model.frame model.matrix .getXlevels
+##' @importFrom stats model.frame model.matrix .getXlevels stepfun
 ##' @importFrom utils tail
 ##' @export bayesCox
 bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
@@ -224,8 +264,7 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
         if (base.prior$type == "GammaProcess" &&
             coef.prior$type == "Normal")
             id <- 12
-    }
-    if (model == "TimeVarying") {
+    } else if (model == "TimeVarying") {
         if (base.prior$type == "Gamma" && coef.prior$type == "AR1")
             id <- 21
         if (base.prior$type == "Gamma" && coef.prior$type == "HAR1")
@@ -236,9 +275,7 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
         if (base.prior$type == "GammaProcess" &&
             coef.prior$type == "HAR1")
             id <- 24
-
-    }
-    if (model == "Dynamic") {
+    } else if (model == "Dynamic") {
         if (base.prior$type == "Gamma" && coef.prior$type == "AR1")
             id <- 31
         if (base.prior$type == "Gamma" && coef.prior$type == "HAR1")
@@ -253,7 +290,8 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
         if (base.prior$type == "GammaProcess" &&
             coef.prior$type == "HAR1")
             id <- 36
-    }
+    } else
+        stop("Invalid 'model' specified.")
 
     gibbs <- do.call("gibbs_fun", gibbs)
     control <- do.call("control_bfun", control)
@@ -263,14 +301,26 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
     mt <- attr(mf, "terms")
     mm <- model.matrix(formula, data)
 
-    LRX <- cbind(mf[, 1][, 1:2], mm[, -1])
-    obsInd <- which(mf[, 1][, 3] == 1)
-    LRX[obsInd, 2] <- LRX[obsInd, 1]
+    LRX <- cbind(mf[, 1L][, seq_len(2L)], mm[, - 1L])
 
-    cov.names <- colnames(mm)[-1]
+    ## reference: Surv.S from survival package
+    eventIdx <- mf[, 1L][, 3L]
+    ## for possibly - Inf or NA left
+    tmpIdx <- eventIdx == 2
+    LRX[tmpIdx, 1L] <- 0
+    ## for exact event times
+    tmpIdx <- eventIdx == 1
+    LRX[tmpIdx, 2L] <- LRX[tmpIdx, 1L]
+    ## for right censoring
+    tmpIdx <- eventIdx == 0
+    LRX[tmpIdx, 2L] <- Inf
 
-    ## prepare the grid if it is not specified
+    ## record coveriate names
+    cov.names <- colnames(mm)[- 1L]
+
+    ## take care of grid
     if (is.null(grid)) {
+        ## prepare the grid if it is not specified
         ## determine the significant digits from the data
         charNum <- as.character(LRX[, seq_len(2)])
         tmpList <- strsplit(charNum, "\\.")
@@ -279,12 +329,8 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
                 return(nchar(a[2L]))
             0
         }))
-        if (sigMax > 3)
-            warning(paste("Endpoints of censoring intervals were enlarged",
-                          "to three significant digits\n to reduce",
-                          "computational burden."))
         ## round the right (left) endpoints up (down)
-        roundPow <- 10 ^ min(sigMax, 3)
+        roundPow <- 10 ^ min(sigMax, 2)
         left_ <- floor(LRX[, "time1"] * roundPow) / roundPow
         right_ <- ceiling(LRX[, "time2"] * roundPow) / roundPow
         finiteRight <- right_[! (is.infinite(right_) | is.na(right_))]
@@ -295,16 +341,35 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
 
         LRX[, "time1"] <- left_
         LRX[, "time2"] <- right_
+    } else {
+        ## make sure all grid points great than zero, finite and sorted
+        if (any(tmpIdx <- is.na(grid) | is.infinite(grid)))
+            grid <- grid[! tmpIdx]
+        if (any(tmpIdx <- grid <= 0))
+            grid <- sort(unique(grid[! tmpIdx]))
+        if (all(tmpIdx <- is.infinite(LRX[, "time2"])))
+            stop("Subjects are all right censored.")
+        finiteRight <- max(LRX[! tmpIdx, "time2"])
+        if (tail(grid, 1L) < finiteRight) {
+            warning(paste("grid' was expanded to cover all the finite endpoint",
+                          "of censoring intervals."))
+            grid <- c(grid, finiteRight)
+        }
+        ## round the left (right) endpoints down (up)
+        ## to the closest grid point including zero
+        toLeft <- stats::stepfun(grid, c(0, grid))
+        toRight <- stats::stepfun(grid, c(grid, Inf))
+        LRX[, "time1"] <- toLeft(LRX[, "time1"])
+        LRX[, "time2"] <- toRight(LRX[, "time2"])
     }
 
-    LRX[LRX[, 2] == Inf, 2] <- max(tail(grid, 1), 999)
-    LRX[is.na(LRX[, 2]), 2] <- max(tail(grid, 1), 999)
+    LRX[is.infinite(LRX[, 2L]), 2L] <- max(tail(grid, 1L), 999)
+    LRX[is.na(LRX[, 2L]), 2L] <- max(tail(grid, 1L), 999)
 
     if (control$intercept) {
-        LRX <- cbind(LRX[, 1:2], 1, LRX[, -c(1:2)])
+        LRX <- cbind(LRX[, seq_len(2L)], 1, LRX[, - seq_len(2L)])
         cov.names <- c("intercept", cov.names)
     }
-
     colnames(LRX) <- c("L", "R", cov.names)
 
     ## Prepare results holder

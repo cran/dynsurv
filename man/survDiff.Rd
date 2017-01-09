@@ -33,7 +33,7 @@ A data frame with column: "Low", "Mid", "High", "Time", "Design",
     and "type", and attribute, "surv" valued as "survDiff".
 }
 \description{
-\code{survDiff} returns estimated suvival function or cumulative function
+\code{survDiff} returns estimated survival function or cumulative function
 from posterior estimates. Note that currently, the function is only
 applicable to the Bayesian dynamic Cox model with dynamic hazard, where the
 control argument is specified to be \code{control = list(intercept = TRUE)}
@@ -49,8 +49,13 @@ survival curves from posterior sample at given credible level.
 \examples{
 ## See the examples in bayesCox.
 }
+\references{
+Wang, W., Chen, M. H., Chiou, S. H., Lai, H. C., Wang, X., Yan, J.,
+& Zhang, Z. (2016). Onset of persistent pseudomonas aeruginosa infection in
+children with cystic fibrosis with interval censored data.
+\emph{BMC Medical Research Methodology}, 16(1), 122.
+}
 \seealso{
-\code{\link{bayesCox}}, \code{\link{survCurve}}, and
-\code{\link{plotSurv}}.
+\code{\link{bayesCox}}, \code{\link{survCurve}}, and \code{\link{plotSurv}}.
 }
 
