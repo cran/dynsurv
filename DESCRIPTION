@@ -1,24 +1,29 @@
 Package: dynsurv
 Title: Dynamic Models for Survival Data
-Version: 0.3-6
-Date: 2017-11-14
+Version: 0.3-7
+Date: 2019-08-27
 Authors@R: c(
     person(given = "Wenjie", family = "Wang",
-           email = "wenjie.2.wang@uconn.edu", role = c("cre", "aut")),
-    person(given = "Ming-Hui", family = "Chen",
-           email = "ming-hui.chen@uconn.edu", role = "aut"),
-    person(given = "Xiaojing", family = "Wang",
-           email = "wangxj03@gmail.com", role = "aut"),
-    person(given = "Jun", family = "Yan",
-           email = "jun.yan@uconn.edu", role = "aut")
+           email = "wenjie.2.wang@uconn.edu",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0363-3180")),
+    person(given = "Ming-Hui", family = "Chen", role = "aut"),
+    person(given = "Xiaojing", family = "Wang", role = "aut"),
+    person(given = "Jun", family = "Yan", role = "aut",
+           comment = c(ORCID = "0000-0003-4401-7296")
+           )
     )
-Description: Functions fitting time-varying coefficient models for interval
-    censored and right censored survival data. Three major approaches are
-    implemented: 1) Bayesian Cox model with time-independent, time-varying or
-    dynamic coefficients for right censored and interval censored data; 2)
-    Spline based time-varying coefficient Cox model for right censored data; 3)
-    Transformation model with time-varying coefficients for right censored data
-    using estimating equations.
+Description: Time-varying coefficient models for interval censored and
+    right censored survival data including
+    1) Bayesian Cox model with time-independent, time-varying or
+    dynamic coefficients for right censored and interval censored data studied by
+    Sinha et al. (1999) <doi:10.1111/j.0006-341X.1999.00585.x> and
+    Wang et al. (2013) <doi:10.1007/s10985-013-9246-8>,
+    2) Spline based time-varying coefficient Cox model for right censored data
+    proposed by Perperoglou et al. (2006) <doi:10.1016/j.cmpb.2005.11.006>, and
+    3) Transformation model with time-varying coefficients for right censored data
+    using estimating equations proposed by
+    Peng and Huang (2007) <doi:10.1093/biomet/asm058>.
 Depends: R (>= 3.0.2)
 Imports: ggplot2, grDevices, grid, nleqslv, plyr, reshape, stats,
         survival, utils
@@ -29,12 +34,12 @@ LazyData: Yes
 NeedsCompilation: yes
 URL: https://github.com/wenjie2wang/dynsurv
 BugReports: https://github.com/wenjie2wang/dynsurv/issues
-RoxygenNote: 6.0.1
-Packaged: 2017-11-14 17:24:26 UTC; wenjie
-Author: Wenjie Wang [cre, aut],
+RoxygenNote: 6.1.1
+Packaged: 2019-08-27 16:11:00 UTC; wenjie
+Author: Wenjie Wang [aut, cre] (<https://orcid.org/0000-0003-0363-3180>),
   Ming-Hui Chen [aut],
   Xiaojing Wang [aut],
-  Jun Yan [aut]
+  Jun Yan [aut] (<https://orcid.org/0000-0003-4401-7296>)
 Maintainer: Wenjie Wang <wenjie.2.wang@uconn.edu>
 Repository: CRAN
-Date/Publication: 2017-11-14 17:36:27 UTC
+Date/Publication: 2019-08-27 23:30:13 UTC

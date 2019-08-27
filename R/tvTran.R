@@ -1,7 +1,7 @@
 ################################################################################
 ##
 ##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2017
+##   Copyright (C) 2011-2019
 ##
 ##   This file is part of the R package dynsurv.
 ##
@@ -49,8 +49,12 @@
 ##' @param control List of control options.
 ##' @return An object of S3 class \code{tvTran} representing the fit.
 ##' @seealso \code{\link{coef.tvTran}}, \code{\link{plotCoef}}.
-##' @references L. Peng, and Y. Huang (2007). Survival analysis with temporal
-##' covariate effects. \emph{Biometrika} 94(3), 719--733.
+##'
+##' @references
+##'
+##' Peng, L. and Huang, Y. (2007). Survival analysis with temporal covariate
+##' effects. \emph{Biometrika} 94(3), 719--733.
+##'
 ##' @keywords transformation right censor
 ##' @examples
 ##' \dontrun{
@@ -107,7 +111,7 @@ tvTran <- function(formula, data, control = list()) {
         rsEst <- matrix(0, R, (nBeta + 1) * K)
 
         ## Indicator matrix: I(time_i <=  eTime_j) * I(status_i == 1)
-        indMat <- outer(rsp[, "time"], eTime, "< = ") * rsp[, "status"]
+        indMat <- outer(rsp[, "time"], eTime, "<=") * rsp[, "status"]
 
         for (r in 1:R) {
             zeta <- rnorm(N)
@@ -120,8 +124,8 @@ tvTran <- function(formula, data, control = list()) {
 
     ## Return list
     rl <- list(call = Call, eTime = eTime, control = control,
-              N = N, K = K, nBeta = nBeta, cov.names = cov.names,
-              pEst = pEst, rsEst = rsEst)
+               N = N, K = K, nBeta = nBeta, cov.names = cov.names,
+               pEst = pEst, rsEst = rsEst)
     class(rl) <- "tvTran"
 
     rl
@@ -159,7 +163,7 @@ tvTran_lite <- function(X, dNMat, YMat, offSetMat) {
 
         ## Solve time-varying coefficients at time t_i
         res <- nleqslv(b0, f, preExpXb = preExpXb, dN = dNMat[, k],
-                      Y = YMat[, k], offSet = offSetMat[k, ], xscalm = "auto")
+                       Y = YMat[, k], offSet = offSetMat[k, ], xscalm = "auto")
         beta <- res$x
         termCode[k] <- res$termcd
         betaMat[k, ] <- beta

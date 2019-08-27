@@ -1,7 +1,7 @@
 ################################################################################
 ##
 ##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2017
+##   Copyright (C) 2011-2019
 ##
 ##   This file is part of the R package dynsurv.
 ##
@@ -52,10 +52,13 @@
 ##' \code{tvcox} package, which is more efficient for larger data set, but may
 ##' not be stable compared to \code{coxph}.
 ##' @seealso \code{\link{coef.splineCox}}, \code{\link{plotCoef}}.
-##' @references A. Perperoglou, S. le Cessie, and H.C. van Houwelingen (2006).
-##' A fast routine for fitting Cox models with time varying effects of the
-##' covariates. \emph{Computer Methods and Programs in Biomedicine} 81,
-##' 154--161.
+##'
+##' @references
+##'
+##' Perperoglou, A., le Cessie, S., & van Houwelingen, H. C. (2006). A fast
+##' routine for fitting Cox models with time varying effects of the
+##' covariates. Computer Methods and Programs in Biomedicine, 81(2), 154--161.
+##'
 ##' @keywords B-spline Cox right censor
 ##' @examples
 ##' \dontrun{
