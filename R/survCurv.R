@@ -1,46 +1,34 @@
-################################################################################
 ##
-##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2019
+## R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
+## Copyright (C) 2011-2020
 ##
-##   This file is part of the R package dynsurv.
+## This file is part of the R package dynsurv.
 ##
-##   The R package dynsurv is free software: You can redistribute it and/or
-##   modify it under the terms of the GNU General Public License as published
-##   by the Free Software Foundation, either version 3 of the License, or
-##   any later version (at your option). See the GNU General Public License
-##   at <http://www.gnu.org/licenses/> for details.
+## The R package dynsurv is free software: You can redistribute it and/or
+## modify it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or any later
+## version (at your option). See the GNU General Public License at
+## <https://www.gnu.org/licenses/> for details.
 ##
-##   The R package dynsurv is distributed in the hope that it will be useful,
-##   but WITHOUT ANY WARRANTY without even the implied warranty of
-##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+## The R package dynsurv is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ##
-################################################################################
 
-
-
-### Generate the survival curves for dynamic model with dynamic hazard.
-### read out file into R (possibly the most time-consuming part)
 
 ##' Estimated Survival Function or Cumulative Hazard Function
 ##'
-##' \code{survCurve} returns estimated survival function or cumulative function
-##' from posterior sample. Note that the function is currently only
-##' applicable to the Bayesian dynamic Cox model with dynamic hazard, where the
-##' control argument is specified to be \code{control = list(intercept = TRUE)}
-##' in function \code{bayesCox}.
+##' Estimated survival function or cumulative hazard function from posterior
+##' sample for an object returned by function \code{bayesCox}.
 ##'
 ##' The estimated survival curve is a step function representing the posterior
 ##' mean survival proportion at the given time grid from the posterior sample.
 ##' The credible interval for the survival curve is constructed based on the
 ##' quantiles of all the survival curves from posterior sample at given credible
-##' level. More details were available in Section posterior computation of
-##' Wang (2016).
+##' level. More details were available in Section posterior computation of Wang
+##' (2016).
 ##'
 ##' @aliases survCurve
-##' @usage
-##' survCurve(object, newdata, type = c("survival", "cumhaz"),
-##'           level = 0.95, centered = FALSE, cache = FALSE, ...)
 ##'
 ##' @param object An object returned by function \code{bayesCox}.
 ##' @param newdata An optional data frame used to generate a design matrix.
@@ -52,14 +40,10 @@
 ##'     cradible band.
 ##' @param centered A logical value. If \code{TRUE}, the mean function for the
 ##'     given \code{newdata} will be computed. The default is \code{FALSE}.
-##' @param cache A logical value. If \code{TRUE}, the cache RData file will be
-##'     generated in the working directory to improve the performance of
-##'     function \code{survCurve} and \code{survDiff}. This option would be
-##'     quite helpful if the number of MCMC sample is large.
 ##' @param ... Other arguments for further usage.
 ##'
 ##' @return A data frame with column: "Low", "Mid", "High", "Time", "Design",
-##' and "type", and attribute, "surv" valued as "survCurve".
+##'     and "type", and attribute, "surv" valued as "survCurve".
 ##'
 ##' @seealso
 ##' \code{\link{bayesCox}},
@@ -67,6 +51,7 @@
 ##' \code{\link{plotSurv}}.
 ##'
 ##' @references
+##'
 ##' Wang, W., Chen, M. H., Chiou, S. H., Lai, H. C., Wang, X., Yan, J.,
 ##' & Zhang, Z. (2016). Onset of persistent pseudomonas aeruginosa infection in
 ##' children with cystic fibrosis with interval censored data.
@@ -74,12 +59,13 @@
 ##'
 ##' @examples
 ##' ## See the examples in bayesCox.
+##'
 ##' @importFrom stats model.frame model.matrix delete.response terms setNames
-##' @importFrom utils read.table
+##'
 ##' @export
 survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
-                      level = 0.95, centered = FALSE, cache = FALSE, ...){
-
+                      level = 0.95, centered = FALSE, ...)
+{
     ## nonsense, just to suppress Note from R CMD check --as-cran
     `(Intercept)` <- NULL
 
@@ -101,29 +87,20 @@ survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
         if (object$control$intercept)
             X <- cbind(intercept = 1, X)
         if (ncol(X) != nBeta) {
-            stop(paste("The number of input covariates does not",
-                       "match with the 'bayesCox' object"))
+            stop("The number of input covariates does not ",
+                 "match with the 'bayesCox' object")
         }
     }
     nDesign <- nrow(X)
 
-    ## check or generate cache and ms
-    cacheName <- paste(substring(object$out, 1L, nchar(object$out) - 4L),
-                       "cache", sep = "_")
-    cacheOut <- paste0(cacheName, ".RData")
-    if (! file.exists(cacheOut)) {
-        ms <- as.matrix(read.table(file = object$out))
-        dimnames(ms) <- NULL
-        ms <- ms[seq(object$gibbs$burn + 1, nrow(ms), by = object$gibbs$thin), ]
-        assign(cacheName, ms)
-        if (cache)
-            save(list = cacheName, file = cacheOut)
-    } else {
-        load(cacheOut)
-        if (! cacheName %in% ls())
-            stop("Cache file does not match. Please remove local cache files.")
-        assign("ms", get(cacheName))
+    ## read ms
+    ms <- object$mcmc
+    if (is.null(ms)) {
+        ms <- read_bayesCox(out = object$out,
+                            burn = object$gibbs$burn,
+                            thin = object$gibbs$thin)
     }
+    ms <- as.matrix(ms)
 
     iter <- nrow(ms)
     bGrid <- c(0, object$grid)
@@ -163,7 +140,7 @@ survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
 
     ## function type
     type <- match.arg(type)
-    if (type == "cumhaz"){
+    if (type == "cumhaz") {
         ## cumulative hazard function
         HtQT <- data.frame(t(apply(Ht, 2, ciBand, level = level)))
         colnames(HtQT) <- c("Low", "Mid", "High")
@@ -194,7 +171,6 @@ survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
 }
 
 
-
 ##' Estimated Difference Between Survival or Cumulative Hazard Functions
 ##'
 ##' \code{survDiff} returns estimated survival function or cumulative function
@@ -210,9 +186,6 @@ survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
 ##' survival curves from posterior sample at given credible level.
 ##'
 ##' @aliases survDiff
-##' @usage
-##' survDiff(object, newdata, type = c("survival", "cumhaz"),
-##'          level = 0.95, cache = FALSE, ...)
 ##'
 ##' @param object An object returned by function \code{bayesCox}.
 ##' @param newdata An optional data frame used to generate a design matrix.
@@ -223,29 +196,30 @@ survCurve <- function(object, newdata, type = c("survival", "cumhaz"),
 ##'     estimated cumulative hazard function for the given \code{newdata}.
 ##' @param level A numerical value between 0 and 1 indicating the level of
 ##'     cradible band.
-##' @param cache A logical value. If \code{TRUE}, the cache RData file will be
-##'     generated in the working directory to improve the performance of
-##'     function \code{survCurve} and \code{survDiff}. This option would be
-##'     quite helpful if the number of MCMC sample is large.
+##'
 ##' @param ... Other arguments for further usage.
 ##' @return A data frame with column: "Low", "Mid", "High", "Time", "Design",
 ##'     and "type", and attribute, "surv" valued as "survDiff".
 ##'
 ##' @references
+##'
 ##' Wang, W., Chen, M. H., Chiou, S. H., Lai, H. C., Wang, X., Yan, J.,
 ##' & Zhang, Z. (2016). Onset of persistent pseudomonas aeruginosa infection in
 ##' children with cystic fibrosis with interval censored data.
 ##' \emph{BMC Medical Research Methodology}, 16(1), 122.
+##'
 ##' @seealso
 ##' \code{\link{bayesCox}}, \code{\link{survCurve}}, and \code{\link{plotSurv}}.
+##'
 ##' @examples
 ##' ## See the examples in bayesCox.
+##'
 ##' @importFrom stats model.frame model.matrix delete.response terms
-##' @importFrom utils read.table
+##'
 ##' @export
 survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
-                     level = 0.95, cache = FALSE, ...) {
-
+                     level = 0.95, ...)
+{
     ## nonsense, just to suppress Note from R CMD check --as-cran
     `(Intercept)` <- NULL
 
@@ -263,8 +237,8 @@ survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
         if (object$control$intercept)
             X <- cbind(intercept = 1, X)
         if (ncol(X) != nBeta) {
-            stop(paste("The number of input covariates does not",
-                       "match with the 'bayesCox' object"))
+            stop("The number of input covariates does not ",
+                 "match with the 'bayesCox' object")
         }
     }
     nDesign <- nrow(X)
@@ -272,23 +246,14 @@ survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
         stop("The 'newdata' must contain two different designs.")
     }
 
-    ## check or generate cache and ms
-    cacheName <- paste(substring(object$out, 1, nchar(object$out) - 4),
-                       "cache", sep = "_")
-    cacheOut <- paste(cacheName, ".RData", sep = "")
-    if (! file.exists(cacheOut)) {
-        ms <- as.matrix(read.table(file = object$out))
-        dimnames(ms) <- NULL
-        ms <- ms[seq(object$gibbs$burn + 1, nrow(ms), by = object$gibbs$thin), ]
-        assign(cacheName, ms)
-        if (cache) save(list = cacheName, file = cacheOut)
-    } else {
-        load(cacheOut)
-        if (! cacheName %in% ls()) {
-            stop("Cache file does not match. Please remove local cache files.")
-        }
-        assign("ms", get(cacheName))
+    ## read ms
+    ms <- object$mcmc
+    if (is.null(ms)) {
+        ms <- read_bayesCox(out = object$out,
+                            burn = object$gibbs$burn,
+                            thin = object$gibbs$thin)
     }
+    ms <- as.matrix(ms)
 
     iter <- nrow(ms)
     bGrid <- c(0, object$grid)
@@ -350,7 +315,6 @@ survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
 }
 
 
-
 ##' Plot Survival Curves (or Cumulative Hazard Function) and their difference
 ##'
 ##' Plot the survival curves (or cumulative hazard) and their difference for
@@ -359,9 +323,6 @@ survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
 ##' customized properly.
 ##'
 ##' @aliases plotSurv
-##' @usage
-##' plotSurv(object, legendName = "", conf.int = FALSE, smooth = FALSE,
-##'          lty, col, ...)
 ##'
 ##' @param object An object returned by function \code{survCurve} or
 ##'     \code{survDiff}.
@@ -379,17 +340,21 @@ survDiff <- function(object, newdata, type = c("survival", "cumhaz"),
 ##' @param ... Other arguments for future usage.
 ##'
 ##' @return A \code{ggplot} object.
+##'
 ##' @seealso
 ##' \code{\link{bayesCox}}, \code{\link{survCurve}}, and
 ##' \code{\link{survDiff}}.
+##'
 ##' @examples
 ##' ## See the examples in bayesCox.
+##'
 ##' @importFrom ggplot2 ggplot aes_string aes geom_step scale_color_manual
 ##'     scale_linetype_manual geom_line ylab ggtitle
+##'
 ##' @export
 plotSurv <- function(object, legendName = "", conf.int = FALSE,
-                     smooth = FALSE, lty, col, ...){
-
+                     smooth = FALSE, lty, col, ...)
+{
     ## nonsense, just to suppress Note from R CMD check --as-cran
     Mid <- Low <- High <- Time <- NULL
 
@@ -479,7 +444,6 @@ plotSurv <- function(object, legendName = "", conf.int = FALSE,
         stop("Unknown 'surv' attribute.")
     p
 }
-
 
 
 ### internal functions =========================================================

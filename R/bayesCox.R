@@ -1,21 +1,19 @@
-################################################################################
 ##
-##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2019
+## R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
+## Copyright (C) 2011-2020
 ##
-##   This file is part of the R package dynsurv.
+## This file is part of the R package dynsurv.
 ##
-##   The R package dynsurv is free software: You can redistribute it and/or
-##   modify it under the terms of the GNU General Public License as published
-##   by the Free Software Foundation, either version 3 of the License, or
-##   any later version (at your option). See the GNU General Public License
-##   at <http://www.gnu.org/licenses/> for details.
+## The R package dynsurv is free software: You can redistribute it and/or
+## modify it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or any later
+## version (at your option). See the GNU General Public License at
+## <https://www.gnu.org/licenses/> for details.
 ##
-##   The R package dynsurv is distributed in the hope that it will be useful,
-##   but WITHOUT ANY WARRANTY without even the implied warranty of
-##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+## The R package dynsurv is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ##
-################################################################################
 
 
 ### Bayesian Cox model
@@ -100,34 +98,30 @@
 ##' The Part 3 is needed by function \code{nu}; Function \code{jump} extracts
 ##' the Part 4.
 ##'
-##' @usage
-##' bayesCox(formula, data, grid = NULL, out = "mcmc.txt",
-##'          model = c("TimeIndep", "TimeVarying", "Dynamic"),
-##'          base.prior = list(), coef.prior = list(),
-##'          gibbs = list(), control = list())
-##'
 ##' @param formula A formula object, with the response on the left of a '~'
 ##'     operator, and the terms on the right. The response must be a survival
 ##'     object as returned by the function \code{Surv} with \code{type =
 ##'     "interval2"}. \code{help(Surv)} for details.
 ##' @param data A data.frame in which to interpret the variables named in the
 ##'     \code{formula}.
-##' @param grid Vector of pre-specified time grid points for model fitting.
-##'     It will be automatically set up from data if it is left unspecified
-##'     in the function call. By default, it consists of all the unique
-##'     finite endpoints (rounded to two significant numbers) of the
-##'     censoring intervals after time zero.  The \code{grid} specified in
-##'     the function call determines the location of possible jumps. It should
-##'     be sorted increasingly and cover all the finite non-zero endpoints of
-##'     the censoring intervals. Inappropriate \code{grid} specified will be
-##'     taken care by the function internally.
-##' @param out Name of Markov chain Monte Carlo (MCMC) samples output file.
-##'     Each row contains one MCMC sample information. The file is needed for
-##'     those functions further summarizing estimation results in this
-##'     package. See Section Details for details.
+##' @param grid Vector of pre-specified time grid points for model fitting.  It
+##'     will be automatically set up from data if it is left unspecified in the
+##'     function call. By default, it consists of all the unique finite
+##'     endpoints (rounded to two significant numbers) of the censoring
+##'     intervals after time zero.  The \code{grid} specified in the function
+##'     call determines the location of possible jumps. It should be sorted
+##'     increasingly and cover all the finite non-zero endpoints of the
+##'     censoring intervals. Inappropriate \code{grid} specified will be taken
+##'     care by the function internally.
+##' @param out An optional character string specifying the name of Markov chain
+##'     Monte Carlo (MCMC) samples output file.  By default, the MCMC samples
+##'     will be output to a temporary directory set by \code{tempdir} and saved
+##'     in the returned \code{bayesCox} object after burning and thinning.  If
+##'     \code{out} is specified, the MCMC samples will be preserved in the
+##'     specified text file.
 ##' @param model Model type to fit. Available options are \code{"TimeIndep"},
-##'     \code{"TimeVarying"}, and \code{"Dynamic"}. Partial matching on the
-##'     name is allowed.
+##'     \code{"TimeVarying"}, and \code{"Dynamic"}. Partial matching on the name
+##'     is allowed.
 ##' @param base.prior List of options for prior of baseline lambda. Use
 ##'     \code{list(type = "Gamma", shape = 0.1, rate = 0.1)} for all models;
 ##'     \code{list(type = "Const", value = 1)} for \code{Dynamic} model when
@@ -135,10 +129,12 @@
 ##' @param coef.prior List of options for prior of coefficient beta. Use
 ##'     \code{list(type = "Normal", mean = 0, sd = 1)} for \code{TimeIndep}
 ##'     model; \code{list(type = "AR1", sd = 1)} for \code{TimeVarying} and
-##'     \code{Dynamic} models; \code{list(type = "HAR1", shape = 2, scale =
-##'     1)} for \code{TimeVarying} and \code{Dynamic} models.
+##'     \code{Dynamic} models; \code{list(type = "HAR1", shape = 2, scale = 1)}
+##'     for \code{TimeVarying} and \code{Dynamic} models.
 ##' @param gibbs List of options for Gibbs sampler.
 ##' @param control List of general control options.
+##' @param ... Other arguments that are for futher extension.
+##'
 ##' @return An object of S3 class \code{bayesCox} representing the fit.
 ##' @seealso \code{\link{coef.bayesCox}}, \code{\link{jump.bayesCox}},
 ##'     \code{\link{nu.bayesCox}}, \code{\link{plotCoef}},
@@ -162,95 +158,22 @@
 ##' D. Sinha, M.-H. Chen, and S.K. Ghosh (1999). Bayesian analysis and model
 ##' selection for interval-censored survival data. \emph{Biometrics} 55(2),
 ##' 585--590.
+##'
 ##' @keywords Bayesian Cox dynamic interval censor
-##' @examples
-##' \dontrun{
-##' library(dynsurv)
-##' set.seed(1216)
 ##'
-##' ############################################################################
-##' ### Attach one of the following two data sets
-##' ############################################################################
+##' @example inst/examples/ex-bayesCox.R
 ##'
-##' ### breast cancer data
-##' data(bcos)       # attach bcos and bcos.grid
-##' mydata <- bcos
-##' mygrid <- bcos.grid
-##' myformula <- Surv(left, right, type = "interval2") ~ trt
-##'
-##' ### tooth data
-##' ## data(tooth)   # attach tooth and tooth.grid
-##' ## mydata <- tooth
-##' ## mygrid <- tooth.grid
-##' ## myformula <- Surv(left, rightInf, type = "interval2") ~ dmf + sex
-##'
-##' ############################################################################
-##' ### Fit Bayesian Cox models
-##' ############################################################################
-##'
-##' ## Fit time-independent coefficient model
-##' fit0 <- bayesCox(myformula, mydata, out = "tiCox.txt", model = "TimeIndep",
-##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
-##'                  coef.prior = list(type = "Normal", mean = 0, sd = 1),
-##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 20))
-##' plotCoef(coef(fit0, level = 0.9))
-##'
-##' ## Plot the estimated survival function for given new data
-##' newDat <- data.frame(trt = c("Rad", "RadChem"))
-##' row.names(newDat) <- unique(newDat$trt)
-##' plotSurv(survCurve(fit0, newDat), conf.int = TRUE)
-##'
-##' ## Fit time-varying coefficient model
-##' fit1 <- bayesCox(myformula, mydata, out = "tvCox.txt", model = "TimeVary",
-##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
-##'                  coef.prior = list(type = "AR1", sd = 1),
-##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 20))
-##' plotCoef(coef(fit1))
-##' plotSurv(survCurve(fit1), conf.int = TRUE)
-##'
-##' ## Fit dynamic coefficient model with time-varying baseline hazards
-##' fit2 <- bayesCox(myformula, mydata, out = "dynCox1.txt", model = "Dynamic",
-##'                  base.prior = list(type = "Gamma", shape = 0.1, rate = 0.1),
-##'                  coef.prior = list(type = "HAR1", shape = 2, scale = 1),
-##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 20))
-##' plotCoef(coef(fit2))
-##' plotJumpTrace(jump(fit2))
-##' plotJumpHist(jump(fit2))
-##' plotNu(nu(fit2))
-##' plotSurv(survCurve(fit2), conf.int = TRUE)
-##'
-##' ## Plot the coefficient estimates from three models together
-##' plotCoef(rbind(coef(fit0), coef(fit1), coef(fit2)))
-##'
-##' ## Fit dynamic coefficient model with dynamic hazards (in log scales)
-##' fit3 <- bayesCox(myformula, mydata, out = "dynCox2.txt", model = "Dynamic",
-##'                  base.prior = list(type = "Const"),
-##'                  coef.prior = list(type = "HAR1", shape = 2, scale = 1),
-##'                  gibbs = list(iter = 100, burn = 20, thin = 1,
-##'                               verbose = TRUE, nReport = 20),
-##'                  control = list(intercept = TRUE))
-##' plotCoef(coef(fit3))
-##' plotJumpTrace(jump(fit3))
-##' plotJumpHist(jump(fit3))
-##' plotNu(nu(fit3))
-##' plotSurv(survCurve(fit3), conf.int = TRUE)
-##'
-##' ## Plot the estimated survival function and the difference
-##' plotSurv(survCurve(fit3, newdata = newDat, type = "survival"),
-##'          legendName = "Treatment", conf.int = TRUE)
-##' plotSurv(survDiff(fit3, newdata = newDat, type = "survival"),
-##'          legendName = "Treatment", conf.int = TRUE, smooth = TRUE)
-##' }
 ##' @importFrom stats model.frame model.matrix .getXlevels stepfun
-##' @importFrom utils tail
-##' @export bayesCox
-bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
+##'
+##' @export
+bayesCox <- function(formula, data, grid = NULL, out = NULL,
                      model = c("TimeIndep", "TimeVarying", "Dynamic"),
-                     base.prior = list(), coef.prior = list(), gibbs = list(),
-                     control = list()) {
+                     base.prior = list(),
+                     coef.prior = list(),
+                     gibbs = list(),
+                     control = list(),
+                     ...)
+{
     Call <- match.call()
 
     ## Prepare prior information
@@ -342,19 +265,26 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
 
     ## prepare data based on the grid
     ## make sure all grid points great than zero, finite and sorted
-    if (any(tmpIdx <- is.na(grid) | is.infinite(grid)))
-        grid <- grid[! tmpIdx]
+    grid <- grid[! (is.na(grid) | is.infinite(grid))]
+    ## exclude non-positive points
+    grid <- grid[! grid <= 0]
     ## add exact event times to the grid
-    if (any(tmpIdx <- grid <= 0))
-        grid <- sort(unique(c(grid[! tmpIdx], exactTimes)))
-    if (all(tmpIdx <- is.infinite(LRX[, "time2"])))
-        stop("Subjects are all right censored.")
-    finiteRight <- max(LRX[! tmpIdx, "time2"])
-    if (tail(grid, 1L) < finiteRight) {
-        warning(paste("The grid was expanded to cover all the finite endpoint",
-                      "of censoring intervals."))
-        grid <- c(grid, finiteRight)
+    if (length(exactTimes) > 0) {
+        grid <- unique(c(grid, exactTimes))
     }
+    if (all(tmpIdx <- is.infinite(LRX[, "time2"]))) {
+        stop("Subjects are all right censored.")
+    }
+    finiteRight <- max(LRX[! tmpIdx, "time2"])
+    if (max(grid) < finiteRight) {
+        warning("The grid was expanded to cover all the finite endpoint ",
+                "of censoring intervals.")
+        grid <- unique(c(grid, finiteRight))
+    }
+
+    ## make sure grid is sorted and consists of unique points
+    grid <- sort(unique(grid))
+
     ## round the left (right) endpoints down (up)
     ## to the closest grid point including zero
     toLeft <- stats::stepfun(grid, c(0, grid))
@@ -362,8 +292,8 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
     LRX[, "time1"] <- toLeft(LRX[, "time1"])
     LRX[, "time2"] <- toRight(LRX[, "time2"])
 
-    LRX[is.infinite(LRX[, 2L]), 2L] <- max(tail(grid, 1L), 999)
-    LRX[is.na(LRX[, 2L]), 2L] <- max(tail(grid, 1L), 999)
+    LRX[is.infinite(LRX[, 2L]), 2L] <- max(grid[length(grid)], 999)
+    LRX[is.na(LRX[, 2L]), 2L] <- max(grid[length(grid)], 999)
 
     if (control$intercept) {
         LRX <- cbind(LRX[, seq_len(2L)], 1, LRX[, - seq_len(2L)])
@@ -371,16 +301,20 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
     }
     colnames(LRX) <- c("L", "R", cov.names)
 
+    ## if out is not specified, use the temp file
+    if (save_mcmc <- is.null(out)) {
+        out <- sprintf("%s.txt", tempfile())
+    }
+
     ## Prepare results holder
     K <- length(grid)
     nBeta <- length(cov.names)
     lambda <- rep(0, K)
-
-    if (model == "TimeIndep")
-        beta <- rep(0, nBeta)
-    else
-        beta <- rep(0, nBeta * K)
-
+    beta <- if (model == "TimeIndep") {
+                rep(0, nBeta)
+            } else {
+                rep(0, nBeta * K)
+            }
     nu <- rep(0, nBeta)
     jump <- rep(0, nBeta * K)
 
@@ -421,90 +355,123 @@ bayesCox <- function(formula, data, grid = NULL, out = "mcmc.txt",
     if (coef.prior$type != "HAR1")
         res$nu <- NULL
 
-    if (model != "Dynamic")
-        res$jump <- NULL
-    else
+    if (model == "Dynamic") {
         res$jump <- matrix(res$jump, K, nBeta)
+    } else {
+        res$jump <- NULL
+    }
 
-    ## Return list
-    rl <- list(call = Call, formula = formula, grid = grid, out = out,
-               model = model, LRX = LRX, base.prior = base.prior,
-               coef.prior = coef.prior, gibbs = gibbs,
-               control = control, xlevels = .getXlevels(mt, mf),
-               N = nrow(LRX), K = K, nBeta = nBeta, cov.names = cov.names,
-               est = list(lambda = res$lambda, beta = res$beta, nu = res$nu,
-                          jump = res$jump),
-               measure = list(LPML = res$LPML, DHat = res$DHat, DBar = res$DBar,
-                              pD = res$pD, DIC = res$DIC))
-    class(rl) <- "bayesCox"
-    rl
+    ## save the MCMC samples if out was not specified
+    if (save_mcmc) {
+        mcmc_list <- read_bayesCox(out, gibbs$burn, gibbs$thin)
+        out <- NULL
+    } else {
+        mcmc_list <- NULL
+    }
+
+    ## Return a list of class bayesCox
+    structure(list(
+        call = Call,
+        formula = formula,
+        grid = grid,
+        out = out,
+        model = model,
+        LRX = LRX,
+        base.prior = base.prior,
+        coef.prior = coef.prior,
+        gibbs = gibbs,
+        control = control,
+        xlevels = .getXlevels(mt, mf),
+        N = nrow(LRX),
+        K = K,
+        nBeta = nBeta,
+        cov.names = cov.names,
+        mcmc = mcmc_list,
+        est = list(lambda = res$lambda,
+                   beta = res$beta,
+                   nu = res$nu,
+                   jump = res$jump),
+        measure = list(LPML = res$LPML,
+                       DHat = res$DHat,
+                       DBar = res$DBar,
+                       pD = res$pD,
+                       DIC = res$DIC)
+    ), class = "bayesCox")
 }
 
 
 ### Internal functions =========================================================
 
 ## Baseline prior
-Gamma_fun <- function(shape = 0.1, rate = 0.1) {
+Gamma_fun <- function(shape = 0.1, rate = 0.1)
+{
     list(shape = shape, rate = rate)
 }
 
-Const_fun <- function(value = 1) {
+Const_fun <- function(value = 1)
+{
     list(value = value, value = value)
 }
 
-GammaProcess_fun <- function(mean = 0.1, ctrl = 1) {
+GammaProcess_fun <- function(mean = 0.1, ctrl = 1)
+{
     list(mean = mean, ctrl = ctrl)
 }
 
-bp_fun <- function(type = c("Gamma", "Const", "GammaProcess"), ...) {
+bp_fun <- function(type = c("Gamma", "Const", "GammaProcess"), ...)
+{
     type <- match.arg(type)
-
-    if (type == "Gamma")
-        hyper <- Gamma_fun(...)
-    if (type == "Const")
-        hyper <- Const_fun(...)
-    if (type == "GammaProcess")
-        hyper <- GammaProcess_fun(...)
-
+    hyper <- if (type == "Gamma") {
+                 Gamma_fun(...)
+             } else if (type == "Const") {
+                 Const_fun(...)
+             } else if (type == "GammaProcess") {
+                 GammaProcess_fun(...)
+             }
     list(type = type, hyper = hyper)
 }
 
 
 ## Coefficient prior
-Normal_fun <- function(mean = 0, sd = 1) {
+Normal_fun <- function(mean = 0, sd = 1)
+{
     list(mean = mean, sd = sd)
 }
-AR1_fun <- function(sd = 1) {
+AR1_fun <- function(sd = 1)
+{
     list(sd = sd, sd = sd)
 }
-HAR1_fun <- function(shape = 2, scale = 1) {
+HAR1_fun <- function(shape = 2, scale = 1)
+{
     list(shape = shape, scale = scale)
 }
 
-cp_fun <- function(type = c("Normal", "AR1", "HAR1"), ...) {
+cp_fun <- function(type = c("Normal", "AR1", "HAR1"), ...)
+{
     type <- match.arg(type)
-
-    if (type == "Normal")
-        hyper <- Normal_fun(...)
-    if (type == "AR1")
-        hyper <- AR1_fun(...)
-    if (type == "HAR1")
-        hyper <- HAR1_fun(...)
-
+    hyper <- if (type == "Normal") {
+                 Normal_fun(...)
+             } else if (type == "AR1") {
+                 AR1_fun(...)
+             } else if (type == "HAR1") {
+                 HAR1_fun(...)
+             }
     list(type = type, hyper = hyper)
 }
 
 
 ## Gibbs sampler control and general control
-gibbs_fun <- function(iter = 3000, burn = 500, thin = 1, verbose = TRUE,
-                      nReport = 100) {
-    list(iter = iter,
-         burn = burn,
-         thin = thin,
+gibbs_fun <- function(iter = 3000, burn = 500, thin = 1,
+                      verbose = TRUE, nReport = 100)
+{
+    list(iter = as.integer(iter),
+         burn = as.integer(burn),
+         thin = as.integer(thin),
          verbose = verbose,
-         nReport = nReport)
+         nReport = as.integer(nReport))
 }
 
-control_bfun <- function(intercept = FALSE, a0 = 100, eps0 = 1) {
+control_bfun <- function(intercept = FALSE, a0 = 100, eps0 = 1)
+{
     list(intercept = intercept, a0 = a0, eps0 = eps0)
 }

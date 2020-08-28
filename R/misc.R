@@ -16,20 +16,13 @@
 ##
 
 
-##' Exported Functions from Other Packages
+##' Is \code{bayesCox} Class Object
 ##'
-##' This page is a placeholder for function(s) exported by \code{dynsurv} but
-##' internally imported from other packages. Please refer to the original
-##' documentation of the imported function for help.
+##' Checks if the input object is of Class \code{bayesCox}.
 ##'
-##' \itemize{
+##' @param object An R object.
 ##'
-##' \item \code{\link[survival]{Surv}}: imported from the \code{survival}
-##' package.
-##'
-##' }
-##'
-##' @name other-exports
-##' @aliases Surv
-##' @export Surv
-NULL
+##' @export
+is.bayesCox <- function(object) {
+    inherits(object, "bayesCox")
+}

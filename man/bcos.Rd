@@ -5,7 +5,8 @@
 \alias{bcos}
 \alias{bcos.grid}
 \title{Breast Cancer Data}
-\format{\code{bcos} is a data frame with 94 observations and 3 columns.
+\format{
+\code{bcos} is a data frame with 94 observations and 3 columns.
 \describe{
     \item{left:}{left censoring time;}
     \item{right:}{right censoring time;}
@@ -13,7 +14,8 @@
          \code{RadChem} = radiotherapy plus chemotherapy).}
 }
 
-\code{bcos.grid} is a numeric vector of grid time points.}
+\code{bcos.grid} is a numeric vector of grid time points.
+}
 \description{
 The breast cancer data from Finkelstein (1985) has been analyzed
 extensively for illustrating new methods in modeling interval censored
@@ -30,6 +32,6 @@ data(bcos)
 \references{
 D.M. Finkelstein, and R.A. Wolfe (1985). A semiparametric model
 for regression analysis of interval-censored failure time data.
-\emph{Biometrics} 41: 731-740.
+\emph{Biometrics} 41: 731--740.
 }
 \keyword{datasets}

@@ -1,22 +1,19 @@
-################################################################################
 ##
-##   R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-##   Copyright (C) 2011-2019
+## R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
+## Copyright (C) 2011-2020
 ##
-##   This file is part of the R package dynsurv.
+## This file is part of the R package dynsurv.
 ##
-##   The R package dynsurv is free software: You can redistribute it and/or
-##   modify it under the terms of the GNU General Public License as published
-##   by the Free Software Foundation, either version 3 of the License, or
-##   any later version (at your option). See the GNU General Public License
-##   at <http://www.gnu.org/licenses/> for details.
+## The R package dynsurv is free software: You can redistribute it and/or
+## modify it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or any later
+## version (at your option). See the GNU General Public License at
+## <https://www.gnu.org/licenses/> for details.
 ##
-##   The R package dynsurv is distributed in the hope that it will be useful,
-##   but WITHOUT ANY WARRANTY without even the implied warranty of
-##   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+## The R package dynsurv is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ##
-################################################################################
-
 
 
 ### Fit a time-varying coefficient Cox model, using B-splines ==================
@@ -38,7 +35,7 @@
 ##'         and maximun finite event time or censoring time will be
 ##'         specified.}
 ##' }
-##' @usage splineCox(formula, data, control = list())
+##'
 ##' @param formula A formula object, with the response on the left of a '~'
 ##' operator, and the terms on the right. The response must be a survival
 ##' object as returned by the \code{Surv} function.
@@ -60,6 +57,7 @@
 ##' covariates. Computer Methods and Programs in Biomedicine, 81(2), 154--161.
 ##'
 ##' @keywords B-spline Cox right censor
+##'
 ##' @examples
 ##' \dontrun{
 ##' ## Attach the veteran data from the survival package
@@ -75,6 +73,7 @@
 ##' }
 ##' @importFrom stats model.matrix model.frame as.formula
 ##' @importFrom survival coxph
+##' @importFrom splines2 bSpline
 ##' @export
 splineCox <- function(formula, data, control = list()) {
 
@@ -125,7 +124,7 @@ splineCox <- function(formula, data, control = list()) {
     newDF <- expand(DF, id = "id", time = "time", status = "status")
 
     ## B-spline basis matrix
-    Ft <- do.call("bs", c(list(x = newDF$tStop), basis))
+    Ft <- do.call(splines2::bSpline, c(list(x = newDF$tStop), basis))
 
     newFml <- as.formula(paste("survival::Surv(tStart, tStop, status) ~ ",
                                paste(paste(FtNms, names(mf)[-1], sep = ""),
@@ -143,11 +142,9 @@ splineCox <- function(formula, data, control = list()) {
 
 
 ### Utility functions ==========================================================
-## Expand row, require package plyr
-##' @importFrom utils head
-##' @importFrom plyr ddply
-expand <- function(data, id = "id", time = "time", status = "status") {
-
+##' @importFrom data.table rbindlist
+expand <- function(data, id = "id", time = "time", status = "status")
+{
     pos <- match(c(id, time, status), names(data))
     if (length(pos) !=  3)
         stop("Variable names not match!\n")
@@ -157,7 +154,7 @@ expand <- function(data, id = "id", time = "time", status = "status") {
     foo <- function(x) {
         tStop <- union(subset(eventTime, eventTime <= max(x[, time])),
                        max(x[, time]))
-        tStart <- c(0, head(tStop, -1))
+        tStart <- c(0, tStop[- length(tStop)])
         st <- rep(0, length(tStop))
         st[tStop %in% x[x[, status] == 1, time]] <- 1
 
@@ -165,12 +162,13 @@ expand <- function(data, id = "id", time = "time", status = "status") {
               st = st, row.names = NULL)
     }
 
-    res <- plyr::ddply(data, id, foo)
+    res <- data.table::rbindlist(by(data, data$id, foo))
     names(res)[ncol(res)] <- status
     res
 }
 
-control_sfun <- function(df = 5, knots = NULL, boundary = NULL) {
+control_sfun <- function(df = 5, knots = NULL, boundary = NULL)
+{
     list(df = df, knots = knots, boundary = boundary)
 }
 
