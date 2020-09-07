@@ -1,5 +1,5 @@
-388bf734a2d240023e6e50ec268bcd7f *ChangeLog
-003d975d23859441e6506fdfe2df80e1 *DESCRIPTION
+194a4ebcfd3f19f74f5a5304c96ae000 *ChangeLog
+b8a5b90f7e74b9979c4837a9375e59ce *DESCRIPTION
 a770a4d60c7400ec24c495d40b7b0de5 *NAMESPACE
 84a530a773eaf6ea50801378714c88ed *R/bayesCox.R
 3e269ff22d35da4d3affc150803e57e5 *R/bayesCoxMcmc.R
@@ -16,9 +16,9 @@ f96041e460451c3913c8d05b5d7e3037 *R/dynsurv-package.R
 8f2079da0000328715ade39d4209ee85 *R/tvTran.R
 7b2ed07bd37790cccee322eb4995406c *data/bcos.RData
 f9dd9273ba88f15f2e212960c52ee91e *data/tooth.RData
-2eb4b133f9a3402cbfabc061d36f2084 *inst/CITATION
-d24dc6fbf7b882a7d8fc81006874095d *inst/examples/ex-bayesCox.R
-2a003f89c7d3c5d44f91ad7b34fd3051 *man/bayesCox.Rd
+c66d4cf0f4196daa6986ee40f63d5ce0 *inst/CITATION
+6a4b214afd4a053082109246e00ca46c *inst/examples/ex-bayesCox.R
+3b3a6e57a517dfc6933f200b3ed5e169 *man/bayesCox.Rd
 ccd1dd08ad14015aaf02782c1e1cec7e *man/bayesCoxMcmc.Rd
 43ae2debcb69fd70f9b69f5d08bfc4d9 *man/bcos.Rd
 e83dba373b51516d03c32834c81bcf79 *man/coef.bayesCox.Rd
