@@ -1,6 +1,6 @@
 ##
 ## R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-## Copyright (C) 2011-2020
+## Copyright (C) 2011-2022
 ##
 ## This file is part of the R package dynsurv.
 ##
@@ -194,7 +194,7 @@ coef.splineCox <- function(object, ...)
 
     curInd <- 1
     res <- data.frame()
-    for (j in seq_along(object$nBeta)) {
+    for (j in seq_len(object$nBeta)) {
         if (!object$is.tv[j]) {
             yMid <- rep(fit$coef[curInd], K)
             ySE <- sqrt(fit$var[curInd, curInd])
