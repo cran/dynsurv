@@ -1,6 +1,6 @@
 ##
 ## R package dynsurv by Wenjie Wang, Ming-Hui Chen, Xiaojing Wang, and Jun Yan
-## Copyright (C) 2011-2022
+## Copyright (C) 2011-2023
 ##
 ## This file is part of the R package dynsurv.
 ##
@@ -31,6 +31,5 @@
 ##'
 ##' @docType package
 ##' @name dynsurv
-##' @importFrom survival Surv
 ##' @useDynLib dynsurv
 NULL
