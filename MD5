@@ -1,5 +1,5 @@
-0bbd93a699bc68c97e9be8d387c1f00e *ChangeLog
-6b1366a1d85436de4e302abef8b17ac8 *DESCRIPTION
+6590cfab0a5f9eb822f7be97ee24c258 *ChangeLog
+0a71e2bf49d760d612c41a2e54bb4812 *DESCRIPTION
 a770a4d60c7400ec24c495d40b7b0de5 *NAMESPACE
 d84f5bf46f9d6a6e09feee875c2da482 *R/bayesCox.R
 74546ebdf87f82f379502848801641da *R/bayesCoxMcmc.R
@@ -16,7 +16,7 @@ e448b7444d6cbe96a80e917a7fce318c *R/splineCox.R
 3cb8ae88149e6584cc5725f4c003b82d *R/tvTran.R
 7b2ed07bd37790cccee322eb4995406c *data/bcos.RData
 f9dd9273ba88f15f2e212960c52ee91e *data/tooth.RData
-f53f9aa28f21d153304609f27498a598 *inst/CITATION
+fbe14d32992f15599aa03fe41684cad2 *inst/CITATION
 6a4b214afd4a053082109246e00ca46c *inst/examples/ex-bayesCox.R
 3b3a6e57a517dfc6933f200b3ed5e169 *man/bayesCox.Rd
 ccd1dd08ad14015aaf02782c1e1cec7e *man/bayesCoxMcmc.Rd
@@ -44,7 +44,7 @@ b0c53ea6b5b116db37ede16ad1b54973 *src/DynamicCoxModel_v2.h
 ac85aad9ccd306807598241ff34448e3 *src/DynamicGORHModel.h
 f7d7ef6cb52caf35fd0f3c461161bf95 *src/DynamicModel.h
 62f66b11c2627247206dde67d2d33d67 *src/GORHModel.h
-83ceb72d195d10ae1634264a836f80b4 *src/GibbsSampler.h
+19da54814e96e69a1d1ffae9eab101f2 *src/GibbsSampler.h
 0c9ee64fbf0d93bad1d0208b0b78ee62 *src/IntRegData.h
 78b5542a6852b9db99aeba092ac8730a *src/IntRegModel.h
 3f45183e92ae7e4fdbd0516398aa1c8f *src/IntRegPar.cpp
